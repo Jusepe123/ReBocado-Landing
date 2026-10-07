@@ -1,8 +1,30 @@
 # Imagen de portada
 
+## Versión React: imágenes adicionales
+
+Generadas con la herramienta integrada de ImageGen, inspeccionadas visualmente y optimizadas a WebP. Son escenas ilustrativas, no ofertas disponibles ni negocios afiliados. La imagen de portada existente se reutiliza en `public/assets/food-hero.webp`.
+
+### cafe
+
+Archivo final: `public/assets/cafe.webp`.
+
+Prompt: Use case: photorealistic-natural. Asset: landscape food-rescue website photograph, 3:2 composition. Premium natural editorial photography of two fresh slices of simple homemade cake, a golden pastry and a wholesome sandwich in an open unbranded kraft takeaway box on a light mint table in a cozy Latin American cafe. Soft afternoon sun, appetizing true food textures, forest green accents, realistic simple portions, warm inviting mood, close 3/4 overhead angle. No text, logos, watermark, screens, people or trash. This is a conceptual example of good food still suitable for consumption, never discarded or spoiled.
+
+### meal
+
+Archivo final: `public/assets/meal.webp`.
+
+Prompt: Use case: photorealistic-natural. Asset: landscape food-rescue website photograph, 3:2 composition. Fresh appetizing Bolivian everyday lunch, cooked rice, grilled chicken and colorful cooked vegetables in a neat open unbranded paper takeaway container on a warm wooden tabletop, small fresh salad beside it. Premium editorial food photography, believable modest serving, warm natural afternoon light, soft shadows, forest green cloth accent, three-quarter overhead camera, crisp natural food textures, cozy local restaurant feeling. No text, logos, watermark, people, raw meat, trash or spoiled food.
+
+### pickup
+
+Archivo final: `public/assets/pickup.webp`.
+
+Prompt: Use case: photorealistic-natural. Asset: landscape website photo for ReBocado business food-rescue section, 3:2 composition. Natural candid editorial photograph of a friendly young Latin American cafe worker in a dark forest green apron handing a single unbranded kraft takeaway bag across a clean wooden bakery counter to a customer. Focus on the bag and natural hands, worker smiling softly in background, shelves of fresh bread softly out of focus, warm late-afternoon daylight, wholesome neighborhood atmosphere, believable hand anatomy, realistic photography, medium close view. No text, no brand logos, no watermark, no screens, no garbage. Fictional illustrative scene, not a real affiliated business.
+
 Generada con la herramienta integrada de ImageGen para esta landing. Es una fotografía conceptual: no representa un pack, un negocio afiliado ni una oferta real.
 
-Archivo: `dist/assets/food-hero.png`.
+Archivo final reutilizado: `public/assets/food-hero.webp`.
 
 Prompt final:
 

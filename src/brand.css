@@ -1,0 +1,11 @@
+.brand { width: 80px; height: 80px; overflow: visible; }
+.brand img { width: 80px; height: 80px; object-fit: contain; transform: none; border-radius: 50%; }
+.footer-brand img { width: 42px; height: 42px; object-fit: contain; border-radius: 50%; mix-blend-mode: multiply; }
+.contact-photo { object-fit: cover; padding: 0; }
+.contact-card .contact-photo { width: 88px; height: 88px; border-radius: 20px; }
+.dialog-contacts .contact-photo { border-radius: 50%; }
+@media (max-width: 900px) { .brand, .brand img { width: 70px; height: 70px; } }
+@media (max-width: 420px) {
+  .brand, .brand img { width: 64px; height: 64px; }
+  .contact-card .contact-photo { width: 80px; height: 80px; border-radius: 18px; }
+}
