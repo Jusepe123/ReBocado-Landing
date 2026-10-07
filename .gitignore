@@ -4,6 +4,9 @@ node_modules/
 *.tar.gz
 *.tar
 .env
+.env.*
+!.env.example
+.vercel/
 dist/
 *.local
 *.zip
