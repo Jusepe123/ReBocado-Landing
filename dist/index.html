@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#174b35">
+  <title>ReBocado · Buena comida. Otra oportunidad.</title>
+  <meta name="description" content="Rescata comida en buen estado a un mejor precio en Cochabamba. Con ReBocado, los negocios recuperan parte de su inversión y menos alimentos terminan en la basura.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+  <header class="header">
+    <a class="brand" href="#" aria-label="ReBocado, inicio"><img src="assets/logo.png" alt="ReBocado" width="120" height="78"></a>
+    <nav class="desktop-nav" aria-label="Navegación principal"><a href="#como-funciona">Cómo funciona</a><a href="#por-que">Por qué rescatar</a><a href="#negocios">Para negocios</a></nav>
+    <button class="button button-small button-outline header-cta" data-join="negocio">Tengo un negocio</button>
+    <button class="menu-button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
+    <nav id="mobile-nav" class="mobile-nav" aria-label="Navegación móvil" hidden><a href="#como-funciona">Cómo funciona</a><a href="#por-que">Por qué rescatar</a><a href="#negocios">Para negocios</a><button class="button" data-join="negocio">Tengo un negocio</button></nav>
+  </header>
+  <main id="contenido">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <span class="eyebrow location"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>HECHO EN COCHA, PARA COCHA</span>
+        <h1>Buena comida.<br>Mejor precio.<br><span>Otra oportunidad.</span></h1>
+        <p class="hero-description">Ese pan de hoy. Esa última porción. Todavía tienen mucho para dar. Rescata un pack sorpresa de un negocio cercano y disfruta por menos.</p>
+        <div class="hero-actions"><button class="button" data-join="consumidor">Quiero participar</button><a class="text-link" href="#como-funciona">Cuéntame cómo funciona <span class="round-plus" aria-hidden="true">+</span></a></div>
+        <p class="pilot-note"><span class="pilot-dot"></span>Empezamos con un piloto en Cochabamba</p>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-photo"><img src="assets/food-hero.webp" alt="Bolsa de papel con panes, croissants y fruta fresca sobre una mesa verde" width="1100" height="1100" fetchpriority="high"><span class="photo-caption">BUENO HASTA EL ÚLTIMO BOCADO</span></div>
+        <div class="rescue-sticker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 4C10 3 4 8 5 15c7 2 13-2 14-11Z M5 20l9-10"/></svg><span>Demasiado rico<br>para desperdiciarlo.</span></div>
+        <div class="pack-note"><span class="pack-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 11h20l2 17H4Z M11 12V8a5 5 0 0 1 10 0v4"/></svg></span><div><strong>Un pack. Muchas posibilidades.</strong><span>El contenido es sorpresa. El ahorro, no.</span></div></div>
+      </div>
+    </section>
+    <div class="value-strip" aria-label="Nuestros principios"><span>Comida en buen estado</span><span class="strip-spark" aria-hidden="true">✳</span><span>Precios más bajos</span><span class="strip-spark" aria-hidden="true">✳</span><span>Menos desperdicio</span><span class="strip-spark" aria-hidden="true">✳</span><span>Más valor para tu barrio</span></div>
+    <section id="como-funciona" class="how section-shell section-space">
+      <div class="section-heading"><div><span class="eyebrow">RESCATAR ES ASÍ DE SIMPLE</span><h2>Tres pasos.<br>Un buen bocado.</h2></div><p>Le damos una segunda oportunidad a la comida que no se vendió. Tú solo tienes que darle la primera mordida.</p></div>
+      <div class="steps">
+        <article class="step"><span class="step-number">01</span><div class="step-top"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="21" cy="21" r="12"/><path d="m30 30 10 10 M16 21h10 M21 16v10"/></svg><span>DESCUBRE</span></div><h3>Encuentra tu pack</h3><p>En el piloto compartimos por WhatsApp los packs de negocios de la zona. Elige según el tipo de comida, el precio y el horario de recojo.</p></article>
+        <article class="step"><span class="step-number">02</span><div class="step-top"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="13" y="5" width="22" height="38" rx="5"/><path d="m18 24 4 4 9-10 M21 37h6"/></svg><span>RESERVA</span></div><h3>Guarda tu sorpresa</h3><p>Reserva el pack que te guste. Su contenido depende de lo que quedó disponible ese día; su precio y la hora de recojo se conocen antes.</p></article>
+        <article class="step"><span class="step-number">03</span><div class="step-top"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 17h32v25H8Z M5 17l4-11h30l4 11 M18 42V29h12v13 M5 17c0 6 9 6 9 0 0 6 10 6 10 0 0 6 10 6 10 0 0 6 9 6 9 0"/></svg><span>DISFRUTA</span></div><h3>Recoge y saborea</h3><p>Pasa por el local dentro del horario acordado y paga allí durante el piloto. Te llevas buena comida y el negocio recupera parte de su inversión.</p></article>
+      </div>
+      <div class="how-footnote"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6 M12 7v1"/></svg><p>Recojo en el negocio, sin delivery. La disponibilidad cambia cada día: rescatamos lo que sobra, sin producir de más.</p></div>
+    </section>
+    <section id="por-que" class="mission section-shell">
+      <div class="mission-intro"><span class="eyebrow">QUE SOBRE COMIDA, NO OPORTUNIDADES</span><h2>Lo que no se vendió<br><span>todavía vale mucho.</span></h2><p>Al cerrar el día, un negocio puede tener comida deliciosa que no alcanzó a vender. Con ReBocado, ese excedente encuentra a alguien que lo disfruta.</p><p>Son alimentos aptos para consumo, ofrecidos a un precio menor. Cada pack evita desperdicio y convierte una posible pérdida en una venta.</p></div>
+      <div class="mission-values"><article><span class="value-symbol">01 /</span><div><h3>Tú disfrutas por menos</h3><p>Buena comida de tu zona, a aproximadamente la mitad de su precio habitual.</p></div></article><article><span class="value-symbol">02 /</span><div><h3>El negocio recupera valor</h3><p>Parte de lo invertido en ingredientes, tiempo y trabajo vuelve al negocio.</p></div></article><article><span class="value-symbol">03 /</span><div><h3>La comida cumple su propósito</h3><p>Termina en una mesa, y menos alimentos en buen estado terminan en la basura.</p></div></article></div>
+    </section>
+    <section class="surprise section-shell section-space">
+      <div class="surprise-title"><span class="eyebrow">LA SORPRESA ES PARTE DEL PLAN</span><h2>¿Qué puede venir<br>en tu próximo pack?</h2><p>Cada día es distinto. Estos son ejemplos de lo que se puede rescatar, según el excedente de cada negocio.</p></div>
+      <div class="pack-examples"><button class="example active" data-category="panaderia" aria-pressed="true">Panaderías</button><button class="example" data-category="cafeteria" aria-pressed="false">Cafeterías</button><button class="example" data-category="restaurante" aria-pressed="false">Restaurantes</button><div class="example-content" aria-live="polite"><span class="example-label">UN POSIBLE BOCADO</span><h3 id="example-title">El pan de hoy merece un mañana.</h3><p id="example-description">Panes, croissants o piezas de bollería que quedaron al final del día. La selección la arma el negocio con lo que tiene disponible.</p><div class="example-tags"><span>Contenido sorpresa</span><span>Recojo al cierre</span></div></div></div>
+    </section>
+    <section id="negocios" class="business section-shell">
+      <div class="business-copy"><span class="eyebrow">PARA QUIENES LE PONEN SABOR A COCHA</span><h2>Tu última venta<br>puede ser un<br><span>nuevo comienzo.</span></h2><p>¿Tienes una panadería, cafetería, pensión o restaurante? Dale una salida a la comida en buen estado que no vendiste y recupera parte de su costo.</p><button class="button button-light" data-join="negocio">Quiero sumar mi negocio</button><span class="business-note">Estamos construyendo nuestra primera red de negocios.</span></div>
+      <div class="business-details"><article><span class="business-number">01</span><h3>Tu excedente, una oportunidad</h3><p>Arma packs con lo que ya preparaste y no se vendió. Tu trabajo todavía puede generar ingresos.</p></article><article><span class="business-number">02</span><h3>Una venta diferente</h3><p>Contenido sorpresa, disponibilidad variable y recojo al cierre: un complemento a tus ventas habituales.</p></article><article><span class="business-number">03</span><h3>El recojo ocurre en tu local</h3><p>Participa en el piloto por WhatsApp. Sin gestionar envíos ni trasladar tu comida a otro lugar.</p></article></div>
+    </section>
+    <section id="preguntas" class="faq section-shell section-space">
+      <div><span class="eyebrow">TODO CLARO, ANTES DEL PRIMER BOCADO</span><h2>¿Te quedó<br>alguna duda?</h2><p>La sorpresa va en el pack.<br>Las condiciones, siempre claras.</p></div>
+      <div class="faq-items"><details><summary>¿Es comida en buen estado?<span aria-hidden="true">+</span></summary><p>Sí. ReBocado conecta a las personas con alimentos aptos para consumo que los negocios no lograron vender. El precio reducido responde al excedente y a su ventana de venta, no a que se trate de desechos.</p></details><details><summary>¿Por qué el pack es sorpresa?<span aria-hidden="true">+</span></summary><p>Porque se arma con el excedente real del día. El negocio indica el tipo de pack, el precio y el horario de recojo, pero las piezas exactas pueden variar.</p></details><details><summary>¿Qué pasa si tengo alergias o restricciones?<span aria-hidden="true">+</span></summary><p>Consulta directamente al negocio antes de reservar. El contenido cambia y no podemos garantizar que todos los packs se adapten a una alergia o dieta específica. Si no puedes confirmar ingredientes y posibles alérgenos, no reserves ese pack.</p></details><details><summary>¿Cómo se paga y dónde se recoge?<span aria-hidden="true">+</span></summary><p>Durante el piloto, reservas por WhatsApp y pagas en el local. Recoges tu pack en ese mismo negocio, dentro de la ventana horaria acordada. No ofrecemos delivery.</p></details><details><summary>¿Ya puedo descargar la aplicación?<span aria-hidden="true">+</span></summary><p>Estamos validando el servicio con un piloto por WhatsApp en Cochabamba, empezando por el entorno de la UMSS. La aplicación está en desarrollo. Anunciaremos su disponibilidad cuando esté lista.</p></details></div>
+    </section>
+    <section id="participa" class="final-cta section-shell"><span class="eyebrow">UN PEQUEÑO CAMBIO. UN GRAN BOCADO.</span><h2>La buena comida<br>merece <span>otra oportunidad.</span></h2><p>Empezamos en Cochabamba. Empezamos cerca.<br>Y queremos que seas parte.</p><div><button class="button" data-join="consumidor">Quiero participar</button><button class="button button-outline" data-join="negocio">Tengo un negocio</button></div><span class="cta-fine">Packs sorpresa · Recojo en el local · Menos desperdicio</span></section>
+  </main>
+  <footer class="footer section-shell"><a class="footer-brand" href="#">ReBocado<span>Bueno hasta el último bocado.</span></a><div><a href="#como-funciona">Cómo funciona</a><a href="#negocios">Para negocios</a><a href="#preguntas">Preguntas frecuentes</a></div><span class="footer-location">Con mucho sabor, desde Cochabamba.<br>© <span id="year">2026</span> ReBocado</span></footer>
+  <dialog id="join-dialog" aria-labelledby="join-title"><button class="dialog-close" aria-label="Cerrar">×</button><span class="eyebrow">EL PRÓXIMO BOCADO EMPIEZA CONTIGO</span><h2 id="join-title">Sé parte del piloto.</h2><p id="join-description"></p><div id="join-contact"></div><p class="dialog-note">Piloto en Cochabamba · Entorno de la UMSS</p></dialog>
+</body>
+</html>
