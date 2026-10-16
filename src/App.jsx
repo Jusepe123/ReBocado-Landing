@@ -1,153 +1,800 @@
-import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, MotionConfig, motion, useReducedMotion, useScroll, useSpring } from 'motion/react';
-import { ArrowDown, ArrowUpRight, Check, ChevronDown, Clock3, Heart, Leaf, Mail, MapPin, Menu, MessageCircle, Phone, Search, ShoppingBag, Smartphone, Sparkles, Store, X } from 'lucide-react';
-import { contacts, packs, questions, whatsappUrl } from './content.js';
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  AnimatePresence,
+  MotionConfig,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+} from "motion/react";
+import {
+  ArrowDown,
+  ArrowUpRight,
+  Check,
+  Clock3,
+  Leaf,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Pause,
+  Play,
+  Plus,
+  ShoppingBag,
+  Store,
+  X,
+} from "lucide-react";
+import { contacts, packs, questions, whatsappUrl } from "./content.js";
+import { BocoScene, ScrollGuide } from "./landing/Boco.jsx";
+import "./landing/landing.css";
 
-const navItems = [['#como-funciona', 'Cómo funciona'], ['#packs', 'Los packs'], ['#negocios', 'Para negocios'], ['#contacto', 'Hablemos']];
+const chapters = [
+  {
+    id: "hola",
+    mood: "happy",
+    text: "¡Soy Boco! Te acompaño a descubrir comida rica, un mejor precio y una nueva oportunidad para lo que sobra.",
+  },
+  {
+    id: "como-funciona",
+    mood: "curious",
+    text: "Es fácil: descubre un pack, reserva por WhatsApp y pasa a recogerlo. Antes, revisa el precio, horario y alérgenos.",
+  },
+  {
+    id: "packs",
+    mood: "delighted",
+    text: "El contenido es sorpresa, pero las condiciones no. Estos son ejemplos; cada pack depende de lo que sobre ese día.",
+  },
+  {
+    id: "negocios",
+    mood: "wink",
+    text: "¿Tienes un negocio? Tu comida todavía tiene mucho para dar. Conversemos sobre cómo sumarte a nuestra primera prueba local.",
+  },
+  {
+    id: "contacto",
+    mood: "happy",
+    text: "Las buenas ideas empiezan conversando. Escríbenos para conocer el piloto, participar como consumidor o sumar tu negocio a ReBocado.",
+  },
+];
+const navigation = [
+  ["#como-funciona", "Cómo funciona"],
+  ["#packs", "Los packs"],
+  ["#negocios", "Tu negocio"],
+  ["#contacto", "Contacto"],
+];
+const steps = [
+  {
+    n: "01",
+    icon: ShoppingBag,
+    title: "Descubre tu pack.",
+    text: "En el piloto compartimos los packs por WhatsApp. Revisa el tipo de comida, el precio y la ventana de recojo.",
+    note: "Aproximadamente a mitad de precio.",
+  },
+  {
+    n: "02",
+    icon: MessageCircle,
+    title: "Reserva por WhatsApp.",
+    text: "Confirma el pack y consulta los ingredientes y alérgenos. El contenido exacto es sorpresa: depende del excedente del día.",
+    note: "Las condiciones claras, antes de reservar.",
+  },
+  {
+    n: "03",
+    icon: Store,
+    title: "Recoge y paga en el local.",
+    text: "Acércate al negocio dentro del horario acordado. Recoge tu pack y paga allí durante el piloto. El recojo es en el local.",
+    note: "Sin pago anticipado en la web.",
+  },
+];
 
-function Reveal({ children, className = '', delay = 0, ...props }) {
+function Reveal({ children, className = "", delay = 0 }) {
   const reduced = useReducedMotion();
-  return <motion.div className={className} initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }} {...props}>{children}</motion.div>;
+  return (
+    <motion.div
+      className={className}
+      initial={reduced ? false : { opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
-function ContactLink({ contact, audience, className = 'button', children }) {
-  return <a className={className} href={whatsappUrl(contact, audience)} target="_blank" rel="noopener noreferrer"><MessageCircle size={18} aria-hidden="true" />{children}</a>;
+function GuideDock({ id, paused, className = "" }) {
+  const chapter = chapters.find((item) => item.id === id);
+  return (
+    <div className={`rb-guide-dock ${className}`} data-guide-anchor={id}>
+      <div className="rb-guide-inline" aria-hidden="true">
+        <BocoScene mood={chapter.mood} text={chapter.text} paused={paused} />
+      </div>
+    </div>
+  );
 }
 
 function JoinDialog({ audience, onClose }) {
   const ref = useRef(null);
-  const business = audience === 'negocio';
+  const business = audience === "negocio";
+  const contact = business ? contacts[1] : contacts[0];
   useEffect(() => {
-    const dialog = ref.current;
-    if (audience && !dialog.open) dialog.showModal();
-    if (!audience && dialog.open) dialog.close();
-  }, [audience]);
-  const ordered = business ? [contacts[1], contacts[0]] : contacts;
-  return <dialog ref={ref} className="join-dialog" aria-labelledby="join-title" onClose={onClose} onClick={(event) => {
-    if (event.target !== event.currentTarget) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) event.currentTarget.close();
-  }}>
-    <button className="dialog-close icon-button" aria-label="Cerrar" onClick={() => ref.current.close()}><X size={22} /></button>
-    <span className="eyebrow"><Leaf size={15} /> EL PRÓXIMO BOCADO EMPIEZA CONTIGO</span>
-    <h2 id="join-title">{business ? 'Tu negocio tiene mucho para dar.' : 'Vamos por ese primer bocado.'}</h2>
-    <p>{business ? 'Cuéntanos qué preparas y en qué zona está tu local. Matt te ayudará a conocer el piloto y cómo sumarte.' : 'Escríbele a José Andrés para conocer los packs y cómo participar en el piloto en Cochabamba.'}</p>
-    <div className="dialog-contacts">{ordered.map((contact, index) => <article key={contact.id}>
-      <div><img className="contact-avatar contact-photo" src={contact.photo} alt={contact.name} width="40" height="40" /><div><strong>{contact.shortName}</strong><span>{contact.role}</span></div>{index === 0 && <span className="recommended">Empieza aquí</span>}</div>
-      <ContactLink contact={contact} audience={audience} className={`button ${index === 0 ? '' : 'button-outline'}`}>Escribir a {contact.shortName}</ContactLink>
-      <a className="dialog-email" href={`mailto:${contact.email}`}>{contact.email}</a>
-    </article>)}</div>
-    <p className="dialog-foot"><MapPin size={15} /> Primera prueba con un restaurante · Cochabamba</p>
-  </dialog>;
+    ref.current.showModal();
+  }, []);
+  return (
+    <dialog
+      ref={ref}
+      className="rb-dialog"
+      aria-labelledby="rb-dialog-title"
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return;
+        const box = event.currentTarget.getBoundingClientRect();
+        if (
+          event.clientX < box.left ||
+          event.clientX > box.right ||
+          event.clientY < box.top ||
+          event.clientY > box.bottom
+        )
+          ref.current.close();
+      }}
+    >
+      <button
+        className="rb-icon-button rb-close"
+        aria-label="Cerrar diálogo"
+        onClick={() => ref.current.close()}
+      >
+        <X />
+      </button>
+      <span className="rb-eyebrow">
+        <Leaf size={15} /> EL PRIMER PASO ES CONVERSAR
+      </span>
+      <h2 id="rb-dialog-title">
+        {business
+          ? "Tu negocio tiene mucho para dar."
+          : "Tu próximo bocado empieza aquí."}
+      </h2>
+      <p>
+        {business
+          ? "Cuéntale a Matt qué preparas y en qué zona está tu local. Conversemos sobre el piloto."
+          : "Escríbele a José Andrés para conocer la primera prueba local y cómo participar."}
+      </p>
+      <div className="rb-dialog-person">
+        <img src={contact.photo} alt="" width="64" height="64" />
+        <div>
+          <strong>{contact.shortName}</strong>
+          <span>{contact.role}</span>
+        </div>
+      </div>
+      <a
+        className="rb-button rb-button-green"
+        href={whatsappUrl(contact, audience)}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Conversar por WhatsApp <MessageCircle size={19} />
+      </a>
+      <a className="rb-dialog-email" href={`mailto:${contact.email}`}>
+        {contact.email}
+      </a>
+      <small>Se abrirá un mensaje preparado. Tú decides cuándo enviarlo.</small>
+    </dialog>
+  );
 }
 
-function App() {
+export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [audience, setAudience] = useState(null);
-  const [category, setCategory] = useState('todos');
-  const [scrolled, setScrolled] = useState(false);
+  const [selectedPack, setSelectedPack] = useState("panaderias");
+  const [paused, setPaused] = useState(false);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 150, damping: 30 });
+  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 30 });
+  const selected = packs.find((pack) => pack.id === selectedPack);
   useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 20);
-    update(); window.addEventListener('scroll', update, { passive: true });
-    return () => window.removeEventListener('scroll', update);
+    const close = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", close);
+    // Lazy loading may finish after the router's initial hash effect.
+    const frame = requestAnimationFrame(() => {
+      const target =
+        window.location.hash &&
+        document.getElementById(window.location.hash.slice(1));
+      if (target)
+        target.scrollIntoView({ behavior: "instant", block: "start" });
+    });
+    return () => {
+      window.removeEventListener("keydown", close);
+      cancelAnimationFrame(frame);
+    };
   }, []);
-  useEffect(() => {
-    const close = (event) => { if (event.key === 'Escape') setMenuOpen(false); };
-    window.addEventListener('keydown', close);
-    return () => window.removeEventListener('keydown', close);
-  }, []);
-  const visiblePacks = category === 'todos' ? packs : packs.filter(pack => pack.id === category);
-
-  return <MotionConfig reducedMotion="user">
-    <a className="skip-link" href="#contenido">Ir al contenido</a>
-    <motion.div className="scroll-progress" aria-hidden="true" style={{ scaleX: reduced ? scrollYProgress : progress }} />
-    <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-      <div className="header-inner shell">
-        <a className="brand" href="#inicio" aria-label="ReBocado, inicio"><img src="/assets/rebocado-emblem.png" alt="ReBocado" width="80" height="80" /></a>
-        <nav className="desktop-nav" aria-label="Navegación principal">{navItems.map(([href, label]) => <a href={href} key={href}>{label}</a>)}</nav>
-        <button className="button button-small header-cta" onClick={() => setAudience('negocio')}>Tengo un negocio <ArrowUpRight size={16} aria-hidden="true" /></button>
-        <button className="menu-button icon-button" aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'} aria-expanded={menuOpen} aria-controls="mobile-nav" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
-      </div>
-      <AnimatePresence>{menuOpen && <motion.nav id="mobile-nav" className="mobile-nav" aria-label="Navegación móvil" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-        {navItems.map(([href, label]) => <a href={href} key={href} onClick={() => setMenuOpen(false)}>{label}<ArrowUpRight size={17} /></a>)}
-        <button className="button" onClick={() => { setMenuOpen(false); setAudience('negocio'); }}>Tengo un negocio</button>
-      </motion.nav>}</AnimatePresence>
-    </header>
-    <main id="contenido">
-      <section id="inicio" className="hero shell">
-        <div className="hero-copy">
-          <Reveal><span className="eyebrow"><MapPin size={15} /> DE COCHA, CON MUCHO SABOR</span></Reveal>
-          <Reveal delay={0.08}><h1>Buena comida.<br />Mejor precio.<br /><span>Otra oportunidad.</span></h1></Reveal>
-          <Reveal delay={0.16}><p>Ese pan de hoy. Esa última porción. Todavía tienen mucho para dar. Rescata un pack sorpresa y evita que buena comida termine en la basura.</p>
-            <div className="hero-actions"><button className="button" onClick={() => setAudience('consumidor')}>Quiero mi primer bocado <ArrowUpRight size={18} /></button><a className="subtle-link" href="#como-funciona">¿Cómo funciona? <ArrowDown size={16} /></a></div>
-            <div className="pilot-note"><span className="pilot-dot" /> Prueba local con un restaurante <span className="note-divider" /> Cochabamba</div>
-          </Reveal>
-        </div>
-        <Reveal className="hero-visual" delay={0.12}>
-          <div className="hero-image-wrap"><img className="hero-image" src="/assets/food-hero.webp" alt="Bolsa llena de panes dorados, croissants y fruta fresca" width="1100" height="1100" fetchPriority="high" /><span className="hero-caption">BUENO HASTA EL ÚLTIMO BOCADO</span></div>
-          <motion.div className="rescue-seal" initial={reduced ? false : { rotate: -20, scale: 0.75 }} animate={{ rotate: 9, scale: 1 }} transition={{ type: 'spring', stiffness: 100, damping: 16, delay: 0.5 }}><Leaf size={25} /><span>Demasiado rico<br />para desperdiciarlo.</span><span className="seal-star">✳</span></motion.div>
-          <div className="hero-mini-photo"><img src="/assets/cafe.webp" alt="Una caja con pastelería y bocados de cafetería" width="720" height="480" /><span>Hoy puede sorprenderte.</span></div>
-          <motion.div className="hero-pack-note" initial={reduced ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.5 }}><span className="note-icon"><ShoppingBag size={22} /></span><div><strong>Una sorpresa que vale la pena.</strong><span>Menos desperdicio. Más buenos bocados.</span></div></motion.div>
-        </Reveal>
-      </section>
-
-      <div className="principles-band"><div className="shell principles"><span><Check size={18} /> Comida en buen estado</span><span><Heart size={18} /> Precios que se disfrutan</span><span><Leaf size={18} /> Menos desperdicio</span><span><Store size={18} /> Más valor para tu barrio</span></div></div>
-
-      <section id="como-funciona" className="how shell section-space">
-        <Reveal className="section-heading"><div><span className="eyebrow">UN PLAN FÁCIL. UN BOCADO INESPERADO.</span><h2>Rescatar sabe bien.<br /><span>Y es así de simple.</span></h2></div><p>La comida ya está preparada. Solo necesita encontrar a quien la disfrute antes de que cierre el negocio.</p></Reveal>
-        <div className="steps">{[
-          { icon: Search, number: '01', label: 'DESCUBRE', title: 'Encuentra tu pack', text: 'En la prueba local compartiremos los packs del restaurante por WhatsApp. Conoce el tipo de comida, el precio y el horario de recojo.' },
-          { icon: Smartphone, number: '02', label: 'RESERVA', title: 'Guarda tu sorpresa', text: 'Elige tu pack y resérvalo. El contenido depende del excedente del día; el precio y las condiciones se conocen antes.' },
-          { icon: ShoppingBag, number: '03', label: 'DISFRUTA', title: 'Recoge y saborea', text: 'Pasa por el local en el horario acordado y paga allí durante el piloto. Tú disfrutas y el negocio recupera parte de su inversión.' },
-        ].map(({ icon: Icon, number, label, title, text }, index) => <Reveal className="step" delay={index * 0.1} key={number}><div className="step-top"><span className="step-icon"><Icon size={27} /></span><span className="step-number">{number}</span></div><span className="eyebrow step-label">{label}</span><h3>{title}</h3><p>{text}</p></Reveal>)}</div>
-        <Reveal className="how-foot"><Clock3 size={18} /><p>La disponibilidad cambia cada día. Rescatamos lo que sobra, sin producir de más.</p></Reveal>
-      </section>
-
-      <section id="packs" className="packs-section">
-        <div className="shell section-space">
-          <Reveal className="section-heading"><div><span className="eyebrow"><Sparkles size={16} /> LA SORPRESA ES PARTE DEL PLAN</span><h2>Tu próximo bocado<br />puede estar <span>por aquí.</span></h2></div><p>Panes, pastelería o una buena porción de comida. Cada pack es distinto. Cada uno merece otra oportunidad.</p></Reveal>
-          <Reveal className="pack-filters" role="group" aria-label="Filtrar ejemplos de packs"><button className={category === 'todos' ? 'active' : ''} aria-pressed={category === 'todos'} onClick={() => setCategory('todos')}>Todos los bocados</button>{packs.map(pack => <button key={pack.id} className={category === pack.id ? 'active' : ''} aria-pressed={category === pack.id} onClick={() => setCategory(pack.id)}>{pack.label}</button>)}</Reveal>
-          <div className={`pack-grid ${category !== 'todos' ? 'filtered' : ''}`} aria-live="polite">
-            <AnimatePresence mode="popLayout">{visiblePacks.map(pack => <motion.article layout={!reduced} className="pack-card" key={pack.id} initial={reduced ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
-              <div className={`pack-photo ${pack.image ? '' : 'pack-illustration'}`}>{pack.image ? <img src={pack.image} alt={pack.alt} width="720" height="480" loading="lazy" /> : <ShoppingBag size={76} strokeWidth={1} aria-hidden="true" />}<span className="pack-category">{pack.label}</span><span className="pack-photo-icon" aria-hidden="true"><ShoppingBag size={21} /></span></div>
-              <div className="pack-card-copy"><span className="pack-kicker">{pack.badge}</span><h3>{pack.title}</h3><p>{pack.description}</p><div className="pack-tags">{pack.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
-            </motion.article>)}</AnimatePresence>
+  return (
+    <MotionConfig reducedMotion={paused ? "always" : "user"}>
+      <div className={`rb-landing ${paused ? "rb-motion-paused" : ""}`}>
+        <a className="rb-skip" href="#contenido">
+          Ir al contenido
+        </a>
+        <motion.div
+          className="rb-reading-progress"
+          style={{ scaleX: reduced ? scrollYProgress : progress }}
+          aria-hidden="true"
+        />
+        <header className="rb-header">
+          <a
+            className="rb-wordmark"
+            href="#inicio"
+            aria-label="ReBocado, inicio"
+          >
+            <img
+              src="/assets/rebocado-emblem.png"
+              alt=""
+              width="44"
+              height="44"
+            />
+            <span>
+              ReBocado<span className="rb-wordmark-dot">.</span>
+            </span>
+          </a>
+          <nav className="rb-desktop-nav" aria-label="Navegación principal">
+            {navigation.map(([href, label]) => (
+              <a key={href} href={href}>
+                {label}
+              </a>
+            ))}
+          </nav>
+          <div className="rb-header-actions">
+            <Link className="rb-demo-link" to="/app">
+              Ver demo <ArrowUpRight size={17} />
+            </Link>
+            <button
+              className="rb-icon-button rb-menu-toggle"
+              aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-controls="rb-mobile-nav"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X /> : <Menu />}
+            </button>
           </div>
-          <p className="illustration-note">Imágenes y packs ilustrativos. El contenido real depende del excedente disponible.</p>
-        </div>
-      </section>
-
-      <section id="por-que" className="mission shell section-space">
-        <Reveal className="mission-title"><span className="eyebrow">LA COMIDA CONSERVA SU VALOR</span><h2>Que sobre comida.<br /><span>No oportunidades.</span></h2><p>No vendemos desechos ni regalamos lo que ya no sirve. Rescatamos alimentos aptos para consumo que no se vendieron a tiempo.</p></Reveal>
-        <div className="mission-values">{[
-          { icon: Heart, title: 'Tú disfrutas por menos', text: 'Buena comida de tu zona, a aproximadamente la mitad de su precio habitual.' },
-          { icon: Store, title: 'El negocio recupera valor', text: 'Parte de lo invertido en ingredientes, tiempo y trabajo vuelve al negocio.' },
-          { icon: Leaf, title: 'Menos comida termina en la basura', text: 'Los alimentos cumplen su propósito: llegar a una mesa y ser disfrutados.' },
-        ].map(({ icon: Icon, title, text }, index) => <Reveal className="mission-value" delay={index * 0.1} key={title}><span className="value-icon"><Icon size={23} /></span><h3>{title}</h3><p>{text}</p></Reveal>)}</div>
-      </section>
-
-      <section id="negocios" className="business shell">
-        <Reveal className="business-image"><img src="/assets/pickup.webp" alt="Una persona de una cafetería entrega una bolsa de comida a un cliente en el mostrador" width="1200" height="800" loading="lazy" /><div className="business-image-label"><span><Store size={18} /> NEGOCIOS DE BARRIO</span><strong>Lo que preparas<br />todavía puede dar más.</strong></div></Reveal>
-        <Reveal className="business-copy"><span className="eyebrow">PARA QUIENES LE PONEN SABOR A COCHA</span><h2>Tu última venta.<br /><span>Una nueva posibilidad.</span></h2><p>¿Tienes una panadería, cafetería, pensión o restaurante? Convierte la comida en buen estado que no vendiste en una oportunidad para recuperar parte de su costo.</p>
-          <ul className="business-benefits"><li><Check size={19} /> Aprovecha lo que ya preparaste.</li><li><Check size={19} /> Complementa tus ventas habituales.</li><li><Check size={19} /> Entrega el pack en tu propio local.</li></ul>
-          <button className="button button-lime" onClick={() => setAudience('negocio')}>Quiero sumar mi negocio <ArrowUpRight size={18} /></button><p className="business-note">Empezamos con un restaurante como prueba local.</p>
-        </Reveal>
-      </section>
-
-      <section id="preguntas" className="faq shell section-space"><Reveal className="faq-heading"><span className="eyebrow">LA SORPRESA VA EN EL PACK</span><h2>Las condiciones,<br /><span>siempre claras.</span></h2><p>Todo lo que necesitas saber antes del primer bocado.</p><a className="subtle-link" href="#contacto">¿Otra pregunta? Hablemos <ArrowUpRight size={16} /></a></Reveal><Reveal className="faq-items">{questions.map(([question, answer]) => <details key={question}><summary>{question}<ChevronDown size={20} aria-hidden="true" /></summary><p>{answer}</p></details>)}</Reveal></section>
-
-      <section id="contacto" className="contact-section"><div className="shell section-space"><Reveal className="contact-heading"><span className="eyebrow">DOS PERSONAS. UNA IDEA CON MUCHO SABOR.</span><h2>Empezamos cerca.<br /><span>Hablemos.</span></h2><p>Estamos construyendo ReBocado desde Cochabamba.<br />Si quieres rescatar un pack o sumar tu negocio, aquí estamos.</p></Reveal>
-        <div className="contact-grid">{contacts.map((contact, index) => <Reveal className="contact-card" key={contact.id} delay={index * 0.1}><div className="contact-card-top"><img className="contact-avatar contact-photo" src={contact.photo} alt={contact.name} width="88" height="88" loading="lazy" /><span className="contact-role">{contact.role}</span></div><h3>{contact.name}</h3><div className="contact-details"><a href={`tel:+${contact.internationalPhone}`}><Phone size={17} /> +591 {contact.phone}</a><a href={`mailto:${contact.email}`}><Mail size={17} /><span>{contact.email}</span></a></div><ContactLink contact={contact} audience={contact.id === 'matt' ? 'negocio' : 'consumidor'} className="button button-outline">Escribir por WhatsApp <ArrowUpRight size={17} /></ContactLink></Reveal>)}</div>
-      </div></section>
-
-      <section className="final-cta shell"><Reveal><span className="eyebrow"><Leaf size={16} /> BUENO HASTA EL ÚLTIMO BOCADO</span><h2>La buena comida<br />merece <span>otra oportunidad.</span></h2><p>Un pack para ti. Una venta para un negocio.<br />Menos comida que se pierde.</p><div className="final-actions"><button className="button" onClick={() => setAudience('consumidor')}>Quiero participar <ArrowUpRight size={18} /></button><button className="button button-outline" onClick={() => setAudience('negocio')}>Tengo un negocio</button></div><span className="final-note">Packs sorpresa · Recojo en el local · Cochabamba</span></Reveal></section>
-    </main>
-    <footer className="footer shell"><div><a className="footer-brand" href="#inicio"><img src="/assets/rebocado-emblem.png" alt="" width="42" height="42" loading="lazy" />ReBocado</a><p>Bueno hasta el último bocado.</p></div><nav aria-label="Navegación del pie">{navItems.map(([href, label]) => <a key={href} href={href}>{label}</a>)}</nav><span>Con mucho sabor, desde Cochabamba.<br />© {new Date().getFullYear()} ReBocado</span></footer>
-    <JoinDialog audience={audience} onClose={() => setAudience(null)} />
-  </MotionConfig>;
+          {menuOpen && (
+            <nav
+              id="rb-mobile-nav"
+              className="rb-mobile-nav"
+              aria-label="Navegación móvil"
+            >
+              {navigation.map(([href, label]) => (
+                <a key={href} href={href} onClick={() => setMenuOpen(false)}>
+                  {label}
+                  <ArrowUpRight size={20} />
+                </a>
+              ))}
+              <button
+                className="rb-button rb-button-green"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setAudience("consumidor");
+                }}
+              >
+                Quiero participar <MessageCircle size={19} />
+              </button>
+            </nav>
+          )}
+        </header>
+        <main id="contenido" tabIndex={-1}>
+          <section
+            className="rb-hero rb-container"
+            id="inicio"
+            aria-labelledby="rb-hero-title"
+          >
+            <div className="rb-hero-copy">
+              <Reveal>
+                <span className="rb-eyebrow rb-location">
+                  <span className="rb-status-dot" /> DE COCHA, PARA TU ANTOJO
+                </span>
+              </Reveal>
+              <Reveal delay={0.06}>
+                <h1 id="rb-hero-title">
+                  Packs sorpresa.
+                  <br />
+                  <span className="rb-outline-word">Precio pequeño.</span>
+                </h1>
+              </Reveal>
+              <Reveal delay={0.13}>
+                <p>
+                  <strong>
+                    Packs sorpresa a aproximadamente mitad de precio.
+                  </strong>{" "}
+                  Comida que no se vendió a tiempo y todavía tiene mucho para
+                  dar. En el piloto, reservas por WhatsApp y pagas al recoger.
+                </p>
+                <div className="rb-hero-actions">
+                  <button
+                    className="rb-button rb-button-green"
+                    onClick={() => setAudience("consumidor")}
+                  >
+                    Quiero participar
+                    <span className="rb-button-arrow">
+                      <ArrowUpRight size={21} />
+                    </span>
+                  </button>
+                  <a className="rb-text-button" href="#como-funciona">
+                    Cómo funciona <ArrowDown size={18} />
+                  </a>
+                </div>
+                <span className="rb-hero-note">
+                  <MapPin size={14} /> Empezamos cerca. Empezamos en Cochabamba.
+                </span>
+              </Reveal>
+            </div>
+            <div className="rb-hero-art">
+              <span className="rb-orbit rb-orbit-one" aria-hidden="true" />
+              <span className="rb-orbit rb-orbit-two" aria-hidden="true" />
+              <GuideDock id="hola" paused={paused} className="rb-hero-dock" />
+              <span className="rb-hero-sticker">
+                <Leaf size={17} /> BUENO HASTA
+                <br />
+                EL ÚLTIMO BOCADO
+              </span>
+              <span className="rb-art-caption">
+                UN PEQUEÑO GUÍA. UNA GRAN CAUSA.
+              </span>
+            </div>
+            <a className="rb-scroll-cue" href="#como-funciona">
+              <span className="rb-scroll-circle">
+                <ArrowDown size={19} />
+              </span>
+              DESLIZA Y DESCUBRE.
+              <span className="rb-scroll-line" />
+            </a>
+          </section>
+          <div className="rb-quick-facts" aria-label="Lo esencial de ReBocado">
+            <ul className="rb-container">
+              <li>
+                <ShoppingBag size={25} />
+                <span>
+                  <strong>Más comida por menos</strong>Aproximadamente a mitad
+                  de precio
+                </span>
+              </li>
+              <li>
+                <MessageCircle size={25} />
+                <span>
+                  <strong>Reserva por WhatsApp</strong>Así coordinamos el piloto
+                </span>
+              </li>
+              <li>
+                <Store size={25} />
+                <span>
+                  <strong>Recoge y paga en el local</strong>Dentro del horario
+                  acordado
+                </span>
+              </li>
+            </ul>
+          </div>
+          <section
+            className="rb-how rb-section"
+            id="como-funciona"
+            aria-labelledby="rb-how-title"
+          >
+            <div className="rb-container rb-how-layout">
+              <div className="rb-how-intro">
+                <Reveal>
+                  <span className="rb-eyebrow">01 / UN PLAN BIEN SIMPLE</span>
+                  <h2 id="rb-how-title">
+                    De la sorpresa
+                    <br />
+                    a tu mesa,
+                    <br />
+                    <span className="rb-serif">en tres pasos.</span>
+                  </h2>
+                  <p>
+                    Así funciona el piloto de ReBocado. Una buena oportunidad
+                    para la comida, el negocio y tu bolsillo.
+                  </p>
+                </Reveal>
+                <GuideDock id="como-funciona" paused={paused} />
+              </div>
+              <div className="rb-steps">
+                {steps.map(({ n, icon: Icon, title, text, note }) => (
+                  <Reveal key={n} className="rb-step">
+                    <span className="rb-step-number">{n}</span>
+                    <div>
+                      <span className="rb-step-icon">
+                        <Icon size={25} strokeWidth={1.5} />
+                      </span>
+                      <h3>{title}</h3>
+                      <p>{text}</p>
+                      <span className="rb-step-note">
+                        {note}
+                        <ArrowUpRight size={17} />
+                      </span>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+              <aside
+                className="rb-before-reserving"
+                aria-labelledby="rb-before-title"
+              >
+                <div>
+                  <span className="rb-eyebrow">
+                    LA SORPRESA ES EL CONTENIDO
+                  </span>
+                  <h3 id="rb-before-title">Antes de reservar</h3>
+                </div>
+                <ul>
+                  <li>
+                    <Check size={20} />
+                    <span>
+                      <strong>Comida y precio.</strong> Conoce el tipo de pack y
+                      cuánto pagarás.
+                    </span>
+                  </li>
+                  <li>
+                    <Clock3 size={20} />
+                    <span>
+                      <strong>Hora y lugar.</strong> Asegúrate de poder
+                      recogerlo en la ventana acordada.
+                    </span>
+                  </li>
+                  <li>
+                    <Leaf size={20} />
+                    <span>
+                      <strong>Ingredientes y alérgenos.</strong> Consúltalos
+                      antes de confirmar tu reserva.
+                    </span>
+                  </li>
+                </ul>
+                <p>
+                  <MessageCircle size={18} /> El piloto se coordina por
+                  WhatsApp. La demo es de prueba y no genera pedidos reales.
+                </p>
+              </aside>
+            </div>
+          </section>
+          <section
+            className="rb-packs rb-section"
+            id="packs"
+            aria-labelledby="rb-packs-title"
+          >
+            <div className="rb-container">
+              <div className="rb-packs-heading">
+                <Reveal>
+                  <span className="rb-eyebrow">
+                    02 / NUNCA ES SOLO LO QUE SOBRA
+                  </span>
+                  <h2 id="rb-packs-title">
+                    La sorpresa
+                    <br />
+                    está <span className="rb-serif">servida.</span>
+                  </h2>
+                  <p>
+                    Panadería, comida o algo dulce: elige un ejemplo para
+                    descubrir qué podría venir en tu pack sorpresa.
+                  </p>
+                </Reveal>
+                <GuideDock id="packs" paused={paused} />
+              </div>
+              <p className="rb-pack-selector-label">
+                ¿Qué se te antoja? Elige un tipo de pack.
+              </p>
+              <div
+                className="rb-pack-tabs"
+                role="group"
+                aria-label="Elegir ejemplo de pack"
+              >
+                {packs.map((pack, i) => (
+                  <button
+                    key={pack.id}
+                    aria-pressed={selectedPack === pack.id}
+                    aria-controls="rb-pack-example"
+                    className={selectedPack === pack.id ? "is-selected" : ""}
+                    onClick={() => setSelectedPack(pack.id)}
+                  >
+                    <span>0{i + 1}</span>
+                    {pack.label}
+                    <ArrowUpRight size={18} />
+                  </button>
+                ))}
+              </div>
+              <div className="rb-pack-feature" id="rb-pack-example">
+                <div className="rb-pack-photo">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.img
+                      key={selected.id}
+                      src={selected.image}
+                      alt={selected.alt}
+                      width="1100"
+                      height="800"
+                      loading="lazy"
+                      initial={reduced ? false : { opacity: 0, scale: 1.04 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.28 }}
+                    />
+                  </AnimatePresence>
+                  <span className="rb-photo-label">
+                    UNA IDEA DE LO QUE PUEDE TOCARTE
+                  </span>
+                  <span className="rb-price-seal">
+                    Buen bocado.
+                    <br />
+                    <strong>Mejor precio.</strong>
+                    <Leaf size={20} />
+                  </span>
+                </div>
+                <div
+                  className="rb-pack-description"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  <span className="rb-eyebrow">
+                    PACK SORPRESA / {selected.label.toUpperCase()}
+                  </span>
+                  <h3>{selected.title}</h3>
+                  <p>{selected.description}</p>
+                  <div className="rb-pack-details">
+                    <span>
+                      <ShoppingBag size={19} /> Contenido sorpresa del día
+                    </span>
+                    <span>
+                      <Leaf size={19} /> Aproximadamente a mitad de precio
+                    </span>
+                    <span>
+                      <Clock3 size={19} /> Consulta el horario de recojo
+                    </span>
+                  </div>
+                  <button
+                    className="rb-text-button"
+                    onClick={() => setAudience("consumidor")}
+                  >
+                    Me apunto al piloto <ArrowUpRight size={22} />
+                  </button>
+                </div>
+              </div>
+              <p className="rb-illustration-note">
+                Packs e imágenes ilustrativos. La disponibilidad y el contenido
+                cambian cada día. Consulta los alérgenos antes de reservar.
+              </p>
+            </div>
+          </section>
+          <section
+            className="rb-belief rb-container"
+            aria-label="Nuestra razón de ser"
+          >
+            <Reveal>
+              <span className="rb-eyebrow">
+                <Leaf size={16} /> UNA IDEA QUE NOS MUEVE
+              </span>
+              <p>
+                Que sobre{" "}
+                <span className="rb-belief-food">
+                  comida
+                  <svg
+                    viewBox="0 0 400 25"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 17Q200-5 395 12" />
+                  </svg>
+                </span>
+                .<br />
+                No oportunidades<span className="rb-lime-dot">.</span>
+              </p>
+              <span className="rb-belief-foot">
+                BUENA PARA TI. BUENA PARA EL NEGOCIO. MEJOR PARA TODOS.
+              </span>
+            </Reveal>
+          </section>
+          <section
+            className="rb-business rb-section"
+            id="negocios"
+            aria-labelledby="rb-business-title"
+          >
+            <div className="rb-container rb-business-layout">
+              <div className="rb-business-visual">
+                <img
+                  src="/assets/pickup.webp"
+                  alt="Escena ilustrativa de una cafetería entregando una bolsa de comida en el mostrador"
+                  width="900"
+                  height="1100"
+                  loading="lazy"
+                />
+                <div className="rb-business-tag">
+                  <Store size={20} />
+                  <span>
+                    DE TU MOSTRADOR
+                    <br />
+                    <strong>A UNA NUEVA OPORTUNIDAD.</strong>
+                  </span>
+                </div>
+                <GuideDock id="negocios" paused={paused} />
+              </div>
+              <Reveal className="rb-business-copy">
+                <span className="rb-eyebrow">
+                  03 / PARA LOS QUE LE DAN SABOR AL BARRIO
+                </span>
+                <h2 id="rb-business-title">
+                  Lo preparaste
+                  <br />
+                  con cariño.
+                  <br />
+                  <span className="rb-serif">Que se disfrute.</span>
+                </h2>
+                <p>
+                  Tu última porción puede ser el mejor momento del día de
+                  alguien. Suma tu panadería, cafetería, pensión o restaurante
+                  al piloto de ReBocado.
+                </p>
+                <ul>
+                  {[
+                    "Recupera parte de lo que ya invertiste.",
+                    "Complementa tus ventas de siempre.",
+                    "Entrega en tu local, sin logística extra.",
+                  ].map((text) => (
+                    <li key={text}>
+                      <Check size={18} />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  className="rb-button rb-button-green"
+                  onClick={() => setAudience("negocio")}
+                >
+                  Mi negocio se suma{" "}
+                  <span className="rb-button-arrow">
+                    <ArrowUpRight size={21} />
+                  </span>
+                </button>
+                <span className="rb-business-note">
+                  Empezamos con una primera prueba local en Cochabamba.
+                </span>
+              </Reveal>
+            </div>
+          </section>
+          <section
+            className="rb-faq rb-container rb-section"
+            id="preguntas"
+            aria-labelledby="rb-faq-title"
+          >
+            <Reveal className="rb-faq-intro">
+              <span className="rb-eyebrow">CERO VUELTAS. TODO CLARO.</span>
+              <h2 id="rb-faq-title">
+                La sorpresa,
+                <br />
+                <span className="rb-serif">solo en el pack.</span>
+              </h2>
+              <p>
+                Las condiciones las conoces antes.
+                <br />Y si tienes otra duda, aquí estamos.
+              </p>
+              <a className="rb-text-button" href="#contacto">
+                Hablemos <ArrowUpRight size={22} />
+              </a>
+            </Reveal>
+            <div className="rb-faq-list">
+              {questions.map(([question, answer]) => (
+                <details key={question}>
+                  <summary>
+                    {question}
+                    <Plus size={21} aria-hidden="true" />
+                  </summary>
+                  <p>{answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+          <section
+            className="rb-contact rb-section"
+            id="contacto"
+            aria-labelledby="rb-contact-title"
+          >
+            <div className="rb-container">
+              <div className="rb-contact-top">
+                <Reveal>
+                  <span className="rb-eyebrow">
+                    04 / LAS BUENAS IDEAS SE COMPARTEN
+                  </span>
+                  <h2 id="rb-contact-title">
+                    Un pequeño bocado.
+                    <br />
+                    <span className="rb-serif">Un gran comienzo.</span>
+                  </h2>
+                  <p>
+                    Estamos construyendo ReBocado desde Cochabamba.
+                    <br />
+                    ¿Rescatamos algo bueno juntos?
+                  </p>
+                  <div className="rb-contact-actions">
+                    <button
+                      className="rb-button rb-button-green"
+                      onClick={() => setAudience("consumidor")}
+                    >
+                      Quiero participar <ArrowUpRight size={20} />
+                    </button>
+                    <button
+                      className="rb-button rb-button-outline"
+                      onClick={() => setAudience("negocio")}
+                    >
+                      Tengo un negocio <ArrowUpRight size={20} />
+                    </button>
+                  </div>
+                </Reveal>
+                <GuideDock id="contacto" paused={paused} />
+              </div>
+              <div className="rb-founders">
+                {contacts.map((contact) => (
+                  <a
+                    key={contact.id}
+                    className="rb-founder"
+                    href={whatsappUrl(
+                      contact,
+                      contact.id === "matt" ? "negocio" : "consumidor",
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src={contact.photo}
+                      alt=""
+                      width="56"
+                      height="56"
+                      loading="lazy"
+                    />
+                    <span>
+                      <strong>{contact.shortName}</strong>
+                      <span>{contact.role}</span>
+                    </span>
+                    <ArrowUpRight size={21} />
+                    <span className="rb-sr-only">: conversar por WhatsApp</span>
+                  </a>
+                ))}
+              </div>
+              <div className="rb-demo-note">
+                <span>
+                  <ShoppingBag size={20} /> EXPLORA LA APP DE DEMOSTRACIÓN
+                </span>
+                <p>
+                  Descubre cómo se verá el catálogo. Los comercios son
+                  ficticios: no se envían pedidos ni se realizan cobros reales.
+                </p>
+                <Link to="/app">
+                  Entrar a la demo <ArrowUpRight size={19} />
+                </Link>
+              </div>
+            </div>
+          </section>
+        </main>
+        <footer className="rb-footer rb-container">
+          <div className="rb-footer-top">
+            <a href="#inicio" className="rb-footer-wordmark">
+              ReBocado<span>.</span>
+            </a>
+            <a href="#inicio" className="rb-back-top">
+              Arriba, que hay más sabor <ArrowUpRight size={20} />
+            </a>
+          </div>
+          <div className="rb-footer-bottom">
+            <span>BUENO HASTA EL ÚLTIMO BOCADO.</span>
+            <span>Hecho con cariño en Cochabamba, Bolivia.</span>
+            <span>© {new Date().getFullYear()} ReBocado</span>
+          </div>
+        </footer>
+        <ScrollGuide sections={chapters} paused={paused} />
+        {!reduced && (
+          <button
+            className="rb-motion-control"
+            onClick={() => setPaused(!paused)}
+            aria-label={paused ? "Reanudar animaciones" : "Pausar animaciones"}
+            aria-pressed={paused}
+          >
+            {paused ? <Play size={14} /> : <Pause size={14} />}
+            <span>{paused ? "Reanudar" : "Pausar"}</span>
+          </button>
+        )}
+        {audience && (
+          <JoinDialog audience={audience} onClose={() => setAudience(null)} />
+        )}
+      </div>
+    </MotionConfig>
+  );
 }
-
-export default App;

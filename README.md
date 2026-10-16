@@ -1,9 +1,19 @@
-# ReBocado · PWA en React
+# ReBocado · Landing y PWA en React
 
-Una aplicación instalable de rescate de comida para Cochabamba. React + Vite, Motion y Lucide. Conserva la landing en `/conoce-rebocado`.
+Landing de ReBocado y aplicación instalable de demostración para Cochabamba. React + Vite, Motion y Lucide. La entrada principal `/` presenta la idea; el catálogo de prueba está en `/app`.
+
+## Rutas y experiencia
+
+- `/`: landing con fondo blanco, identidad verde y Boco, un rostro SVG ampliado con gorra blanca y contornos verdes. Sus diálogos permanecen visibles mientras se lee cada sección, sin cierre por temporizador. En escritorio mantiene un recorrido continuo y se reduce durante los trayectos; en móvil aparece dentro del contenido. El control de pausa y la preferencia de movimiento reducido conservan las escenas estáticas y sus mensajes.
+- `/conoce-rebocado`: alias compatible de la misma landing.
+- `/app`: catálogo PWA de demostración; los enlaces de la landing permiten abrirlo.
+- `/favoritos`, `/reservas`, `/perfil`, `/comercios/:id` y `/reservar/:id`: conservan los flujos de la demo.
+
+El manifest conserva `id: "/"` para mantener la identidad de instalaciones existentes, con `start_url: "/app"` y un acceso directo al catálogo. Abrir el dominio en un navegador muestra la landing; abrir la app instalada entra a la demo.
 
 ## Qué incluye
 
+- Explicación destacada del piloto: packs a aproximadamente mitad de precio, reserva por WhatsApp y recojo/pago en el local. Tres pasos visibles y una lista de precio, horario y alérgenos que revisar antes de reservar.
 - Catálogo de restaurantes, panaderías y cafeterías; búsqueda, categorías y orden por precio u horario.
 - Fichas con tipo de pack, valor de referencia, horarios, recojo y advertencia de alérgenos.
 - Favoritos, elección de día y cantidad, reserva con código y control de disponibilidad local.
@@ -32,7 +42,7 @@ npm run build
 npm run preview
 ```
 
-`npm test` ejecuta las pruebas de fechas, stock, reservas, pagos de prueba y recuperación de datos locales.
+`npm test` ejecuta las pruebas de fechas, stock, reservas, pagos de prueba y recuperación de datos locales, además de la continuidad y reversibilidad del recorrido del personaje.
 
 El desarrollo no registra un service worker para evitar cachés de versiones viejas. Si anteriormente probaste la versión de producción en ese mismo puerto, elimina su service worker y caché desde DevTools → Application, o usa otro puerto para el preview:
 
@@ -53,13 +63,13 @@ Importa [Jusepe123/ReBocado-Landing](https://github.com/Jusepe123/ReBocado-Landi
 | Install Command      | `npm ci`                         |
 | Build Command        | `npm run build`                  |
 | Output Directory     | `dist`                           |
-| Node.js Version      | `24.x` (predeterminado actual)    |
+| Node.js Version      | `24.x` (predeterminado actual)   |
 | Variables de entorno | Ninguna para esta demo           |
 
 1. Inicia sesión en Vercel con GitHub y elige **Add New → Project** (o **New Project**).
 2. En **Import Git Repository**, busca `Jusepe123/ReBocado-Landing` y pulsa **Import**. Si no aparece, concede acceso a ese repositorio en la integración de GitHub.
 3. Usa los ajustes de la tabla. No selecciones `site/`: `package.json` ya está en la raíz del repositorio publicado. La rama de producción es `main`.
-4. Pulsa **Deploy**. Cuando finalice, abre la URL que te entregue Vercel y comprueba `/`, `/reservas` y `/conoce-rebocado`.
+4. Pulsa **Deploy**. Cuando finalice, abre la URL que te entregue Vercel y comprueba la landing en `/`, el catálogo en `/app`, `/reservas` y el alias `/conoce-rebocado`.
 5. Carga la app una vez, instálala desde el navegador y prueba el modo sin conexión. Las futuras subidas a `main` generarán un nuevo despliegue mientras la integración Git siga activa.
 
 Referencias de configuración: [importar un repositorio y despliegues Git](https://vercel.com/docs/git) y [versiones de Node.js](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions).
@@ -76,12 +86,15 @@ Se retiraron los dos archivos `amplify.yml` y las instrucciones de Amplify. **Es
 - `src/app/catalog.js`: datos ficticios y fechas/stock de ejemplo.
 - `src/app/store.js`: validación, persistencia y transiciones de reservas.
 - `src/app/app.css`: diseño de aplicación.
-- `src/App.jsx`, `src/styles.css`, `src/brand.css`: landing original conservada.
+- `src/App.jsx`, `src/landing/landing.css`: landing, selector de ejemplos, preguntas, contacto y estilos aislados `rb-*`.
+- `src/landing/Boco.jsx`, `src/landing/Boco.css`: ilustración vectorial, escenas con diálogos persistentes y guía de scroll; sin imágenes externas ni librerías adicionales.
+- `src/landing/guideMotion.js`, `tests/guideMotion.test.js`: recorrido continuo entre anclas, miniatura lateral y pruebas de regresión para evitar desapariciones y saltos de posición o tamaño.
+- `src/styles.css`, `src/brand.css`: estilos base compartidos y ajustes de marca existentes.
 - `src/content.js`: contactos y mensajes de WhatsApp.
 - `vite.config.js`: manifest y service worker con precaché.
 - `public/assets/`: logo y retratos proporcionados, fotografías ilustrativas WebP. Los prompts de las fotos están en `IMAGE.md`.
 
-Los iconos PWA se derivan del emblema circular suministrado; el maskable incluye margen de seguridad. Los enlaces a WhatsApp solo abren un mensaje preparado, no lo envían automáticamente.
+El favicon y los iconos PWA representan una bolsa mordida con sonrisa y hoja, en verde y lima. La fuente vectorial está en `public/favicon-rebocado.svg`, con variantes PNG y un maskable con margen de seguridad. Las URLs usan `?v=4` para renovar iconos anteriores; la precaché admite esa versión también offline. Los enlaces a WhatsApp solo abren un mensaje preparado, no lo envían automáticamente.
 
 ## Antes de lanzar con usuarios reales
 

@@ -74,7 +74,7 @@ const Landing = lazy(() => import("../App.jsx"));
 const AppContext = createContext(null);
 const useApp = () => useContext(AppContext);
 const navigation = [
-  { to: "/", label: "Explorar", icon: Store },
+  { to: "/app", label: "Explorar", icon: Store },
   { to: "/favoritos", label: "Favoritos", icon: Heart },
   { to: "/reservas", label: "Mis reservas", icon: Ticket },
   { to: "/perfil", label: "Mi espacio", icon: UserRound },
@@ -278,7 +278,7 @@ function Shell({ children }) {
         Ir al contenido
       </a>
       <aside className="app-sidebar">
-        <Link to="/" className="app-brand" aria-label="ReBocado, inicio">
+        <Link to="/app" className="app-brand" aria-label="ReBocado, catálogo">
           <img
             src="/assets/rebocado-emblem.png"
             width="52"
@@ -295,7 +295,7 @@ function Shell({ children }) {
             <NavLink
               key={to}
               to={to}
-              end={to === "/"}
+              end={to === "/app"}
               className={({ isActive }) =>
                 `app-nav-link ${isActive ? "active" : ""}`
               }
@@ -315,7 +315,7 @@ function Shell({ children }) {
               Menos desperdicio.
             </strong>
             <p>Cada pack es una nueva oportunidad.</p>
-            <Link to="/conoce-rebocado">
+            <Link to="/">
               Conoce ReBocado <ArrowUpRight size={15} />
             </Link>
           </div>
@@ -326,7 +326,7 @@ function Shell({ children }) {
       </aside>
       <div className="app-workspace">
         <header className="app-topbar">
-          <Link to="/" className="app-mobile-brand">
+          <Link to="/app" className="app-mobile-brand">
             <img
               src="/assets/rebocado-emblem.png"
               width="34"
@@ -372,7 +372,7 @@ function Shell({ children }) {
           <NavLink
             key={to}
             to={to}
-            end={to === "/"}
+            end={to === "/app"}
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             <span>
@@ -759,7 +759,7 @@ function Favorites() {
           title="Aquí van tus próximos antojos"
           description="Toca el corazón de un comercio para guardarlo en este dispositivo."
         >
-          <Link to="/" className="app-button">
+          <Link to="/app" className="app-button">
             Explorar comercios <ArrowRight size={17} />
           </Link>
         </EmptyState>
@@ -776,7 +776,7 @@ function MerchantDetail() {
   const available = remainingStock(merchant, state.orders, date);
   return (
     <>
-      <Link to="/" className="app-back">
+      <Link to="/app" className="app-back">
         <ArrowLeft size={16} />
         Volver a explorar
       </Link>
@@ -1306,7 +1306,7 @@ function Orders() {
               : "Aquí verás las reservas de prueba recogidas o canceladas."
           }
         >
-          <Link to="/" className="app-button">
+          <Link to="/app" className="app-button">
             Encontrar un pack <ArrowRight size={17} />
           </Link>
         </EmptyState>
@@ -1500,7 +1500,7 @@ function Profile() {
               ))}
             </div>
           </section>
-          <Link to="/conoce-rebocado" className="app-about-link">
+          <Link to="/" className="app-about-link">
             <span>
               <Leaf size={22} />
               Conoce la idea detrás de ReBocado
@@ -1551,8 +1551,8 @@ function NotFound() {
       title="Este bocado se nos escapó"
       description="No encontramos la página que buscas. Vuelve al catálogo para explorar."
     >
-      <Link to="/" className="app-button">
-        Volver al inicio <ArrowRight size={17} />
+      <Link to="/app" className="app-button">
+        Volver al catálogo <ArrowRight size={17} />
       </Link>
     </EmptyState>
   );
@@ -1572,6 +1572,7 @@ export default function PwaApp() {
   const [message, setMessage] = useState("");
   const toastTimer = useRef(null);
   const location = useLocation();
+  const marketing = ["/", "/conoce-rebocado"].includes(location.pathname);
   function mutate(updater) {
     const next = updater(stateRef.current);
     stateRef.current = next;
@@ -1612,10 +1613,10 @@ export default function PwaApp() {
     const today = todayInBolivia();
     if (![today, nextDay(today)].includes(date)) setDate(today);
     document.title =
-      location.pathname === "/"
-        ? "ReBocado · Tu próximo buen bocado"
-        : `${location.pathname.startsWith("/reservas") ? "Mis reservas" : location.pathname.startsWith("/favoritos") ? "Favoritos" : location.pathname.startsWith("/perfil") ? "Mi espacio" : "ReBocado"} · ReBocado`;
-  }, [location.pathname, date]);
+      marketing
+        ? "ReBocado · La buena comida merece otra oportunidad"
+        : `${location.pathname === "/app" ? "Explora la demo" : location.pathname.startsWith("/reservas") ? "Mis reservas" : location.pathname.startsWith("/favoritos") ? "Favoritos" : location.pathname.startsWith("/perfil") ? "Mi espacio" : "ReBocado"} · ReBocado`;
+  }, [location.pathname, marketing, date]);
   useEffect(() => {
     const target = location.hash
       ? document.getElementById(location.hash.slice(1))
@@ -1623,28 +1624,21 @@ export default function PwaApp() {
     if (target) target.scrollIntoView({ behavior: "instant", block: "start" });
     else window.scrollTo({ top: 0, behavior: "instant" });
   }, [location.pathname, location.hash]);
-  const marketing = location.pathname === "/conoce-rebocado";
   return (
     <AppContext.Provider
       value={{ state, mutate, toast, date, setDate, storageError }}
     >
       <MotionConfig reducedMotion="user">
         {marketing ? (
-          <>
-            <Link className="app-return" to="/">
-              <ArrowLeft size={16} />
-              Volver a la app de prueba
-            </Link>
-            <Suspense
-              fallback={<div className="app-loading">Cargando ReBocado…</div>}
-            >
-              <Landing />
-            </Suspense>
-          </>
+          <Suspense
+            fallback={<div className="app-loading">Cargando ReBocado…</div>}
+          >
+            <Landing />
+          </Suspense>
         ) : (
           <Shell>
             <Routes>
-              <Route path="/" element={<Explore />} />
+              <Route path="/app" element={<Explore />} />
               <Route path="/favoritos" element={<Favorites />} />
               <Route path="/reservas" element={<Orders />} />
               <Route path="/perfil" element={<Profile />} />

@@ -1,0 +1,137 @@
+.boco-character {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: #124d35;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.boco-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: #124d35;
+}
+
+.boco-scene__speech {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  min-height: 76px;
+  position: relative;
+  z-index: 1;
+}
+
+.boco-scene__bubble {
+  position: relative;
+  width: min(100%, 328px);
+  padding: 11px 16px;
+  border: 1.5px solid #124d35;
+  border-radius: 16px 16px 16px 4px;
+  background: #fff;
+  box-shadow: 0 4px 0 rgb(18 77 53 / 7%);
+  text-align: center;
+}
+
+.boco-scene__bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 39%;
+  width: 12px;
+  height: 12px;
+  border-right: 1.5px solid #124d35;
+  border-bottom: 1.5px solid #124d35;
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.boco-scene__bubble p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #124d35;
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.boco-scene__portrait {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  padding-top: 9px;
+}
+
+.boco-scene__portrait .boco-character {
+  width: 100%;
+  height: 100%;
+}
+
+.boco-head {
+  transform-origin: 200px 210px;
+}
+
+.boco-eye,
+.boco-eye__blink {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.boco-guide {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 15;
+  width: 360px;
+  height: 360px;
+  pointer-events: none;
+  transform-origin: 0 0;
+  isolation: isolate;
+  will-change: transform;
+}
+
+.boco-guide__face,
+.boco-guide__character {
+  width: 100%;
+  height: 100%;
+}
+
+.boco-guide__face {
+  transform-origin: center;
+}
+
+.boco-guide[data-chapter="packs"] .boco-guide__character {
+  filter: drop-shadow(1px 0 0 #e3f0b9) drop-shadow(-1px 0 0 #e3f0b9)
+    drop-shadow(0 1px 0 #e3f0b9) drop-shadow(0 -1px 0 #e3f0b9);
+}
+
+.boco-guide--still {
+  display: none;
+}
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .boco-guide {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .boco-scene__bubble {
+    max-width: 300px;
+    padding: 10px 14px;
+  }
+
+  .boco-scene__bubble p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+}
